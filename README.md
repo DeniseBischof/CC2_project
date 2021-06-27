@@ -1,6 +1,6 @@
 # CC2_project
 
-Inspirations:
+Resources:
 
 Audio Reactive Shape:
 https://www.youtube.com/watch?v=IiTsE7P-GDs
