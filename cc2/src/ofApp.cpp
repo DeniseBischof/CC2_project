@@ -66,8 +66,8 @@ void ofApp::setup() {
 
 	// Loading image to use as background https://www.youtube.com/watch?v=eXx5aJCmbz0
 	forest.load("../../images/forest.jpg");
-	beach.load("../../images/forest.jpg");
-	volcano.load("../../images/forest.jpg");
+	beach.load("../../images/beach.jpg");
+	volcano.load("../../images/volcano.jpg");
 
 	for (size_t i = 0; i < num_pts; i++) {
 		x_off[i] = ofRandom(0, 1000);
@@ -199,8 +199,21 @@ void ofApp::draw() {
 	else if (bg_color >= 0) {
 		bg_color -= bg_change_rate;
 	}
+
 	ofSetColor(bg_color);
-	forest.draw(0, 0, ofGetWidth(), ofGetHeight());
+
+	if (options == 1) {
+		forest.draw(0, 0, ofGetWidth(), ofGetHeight());
+	}
+	else if (options == 2) {
+		volcano.draw(0, 0, ofGetWidth(), ofGetHeight());
+	}
+	else {
+		beach.draw(0, 0, ofGetWidth(), ofGetHeight());
+	}
+
+
+	
 	drawPoints();
 	drawBands();
 
@@ -234,10 +247,6 @@ void ofApp::draw() {
 		ofSetColor(ofColor::purple);
 		ofDrawRectangle(rectPurple);
 	}
-
-
-
-
 }
 
 
@@ -247,13 +256,13 @@ void ofApp::drawBands() {
 		float band_height = left[i] * right[i] * max_band_height;
 
 		if (options == 1) {
-			ofSetColor(5, 20, 40);
+			ofSetColor(5, 20, 40, 127);
 		}
 		else if (options == 2) {
-			ofSetColor(50, 5, 5);
+			ofSetColor(50, 5, 5, 127);
 		}
 		else {
-			ofSetColor(50, 5, 50);
+			ofSetColor(50, 5, 50, 127);
 		}
 
 		float band_height_threshold = max_band_height - 280;
@@ -336,5 +345,4 @@ void ofApp::connectPoints() {
 	}
 	updateColors();
 }
-
 
