@@ -347,7 +347,7 @@ void ofApp::connectPoints() {
 				ofSetColor(pt_colors[i].r, pt_colors[i].g, pt_colors[i].b);
 				ofSetLineWidth(line_width);
 
-				if (rand = 1) {
+				if (rand == 1) {
 					ofDrawLine(points[i], points[j]);
 				}
 				else {
