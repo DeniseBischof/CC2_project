@@ -28,13 +28,15 @@ float sound_spectrum[num_bands];
 float sound_spectrum_smoothness = .92;
 float curVol = 0.0;
 
+float soundMultiplier = 3;
+
 int options = 1;
 
 void ofApp::setup() {
 
-	rectBlue.set(50, 100, 100, 40);
-	rectRed.set(50, 200, 100, 40);
-	rectPurple.set(50, 300, 100, 40);
+	rectBlue.set(20, 100, 50, 40);
+	rectRed.set(20, 200, 50, 40);
+	rectPurple.set(20, 300, 50, 40);
 
 	soundStream.printDeviceList();
 
@@ -118,10 +120,10 @@ void ofApp::audioIn(ofSoundBuffer& input) {
 
 	curVol /= (float)numCounted;
 
-	curVol = sqrt(curVol);
+	curVol = sqrt(curVol) * soundMultiplier;
 
 	smoothedVol *= 0.93;
-	smoothedVol += 0.07 * curVol;
+	smoothedVol += 0.07 * curVol * soundMultiplier;
 
 	bufferCounter++;
 
@@ -174,7 +176,7 @@ void ofApp::updatePoints() {
 float getMaxFrequency() {
 	float max = 0.0F;
 	for (size_t i = 0; i < num_bands; i++) {
-		if (max < sound_spectrum[i] * curVol) {
+		if (max < sound_spectrum[i] * curVol * soundMultiplier) {
 			max = sound_spectrum[i];
 		}
 	}
@@ -187,7 +189,7 @@ void ofApp::updateBars() {
 	float* val = ofSoundGetSpectrum(num_bands);
 	for (int i = 0; i < num_bands; i++) {
 		left[i] *= right[i];
-		sound_spectrum[i] = max((right[i] * left[i]) * ofRandom(1, 10), val[i]);
+		sound_spectrum[i] = max(((right[i] * left[i]) * soundMultiplier) * ofRandom(1, 10), val[i]);
 	}
 }
 
@@ -217,34 +219,35 @@ void ofApp::draw() {
 	drawPoints();
 	drawBands();
 
-	ofDrawBitmapString("Choose your color theme", 32, 32);
+	//ofDrawBitmapString("Choose your color theme", 32, 80);
+	//ofSetColor(200, 200, 200, 125);
 
 	if (blueIsClicked) {
-		ofSetColor(ofColor::gray);
+		ofSetColor(80, 80, 80, 125);
 		ofDrawRectangle(rectBlue);
 		options = 1;
 	}
 	else {
-		ofSetColor(ofColor::blue);
+		ofSetColor(5, 150, 150, 125);
 		ofDrawRectangle(rectBlue);
 	}
 
 	if (redIsClicked) {
-		ofSetColor(ofColor::gray);
+		ofSetColor(80, 80, 80, 125);
 		ofDrawRectangle(rectRed);
 		options = 2;
 	}
 	else {
-		ofSetColor(ofColor::red);
+		ofSetColor(150, 10, 10, 125);
 		ofDrawRectangle(rectRed);
 	}
 	if (purpleIsClicked) {
-		ofSetColor(ofColor::gray);
+		ofSetColor(80, 80, 80, 125);
 		ofDrawRectangle(rectPurple);
 		options = 3;
 	}
 	else {
-		ofSetColor(ofColor::purple);
+		ofSetColor(150, 10, 120, 125);
 		ofDrawRectangle(rectPurple);
 	}
 }
@@ -271,13 +274,13 @@ void ofApp::drawBands() {
 			reached_max_band_height = true;
 
 			if (options == 1) {
-				ofSetColor(50, ofRandom(50, 100), ofRandom(50, 125));
+				ofSetColor(50, ofRandom(50, 100), ofRandom(50, 125), 127);
 			}
 			else if (options == 2) {
-				ofSetColor(ofRandom(125, 175), 50, ofRandom(50, 125));
+				ofSetColor(ofRandom(125, 175), 50, ofRandom(50, 125), 127);
 			}
 			else {
-				ofSetColor(ofRandom(125, 175), 50, ofRandom(125, 175));
+				ofSetColor(ofRandom(125, 175), 50, ofRandom(125, 175), 127);
 			}
 		}
 		ofRect(ofGetWidth() - band_x_pos[i], 0, band_width, (band_height * .6) + min_band_height);
@@ -320,26 +323,36 @@ void ofApp::drawPoints() {
 
 void bassBoost() {
 	pt_radius = 6;
-	line_width = 4;
+	line_width = 2;
 	speed_multiplier = 1.1;
 }
 
 void clearBoost() {
 	pt_radius = 3;
-	line_width = 2;
+	line_width = 1;
 	speed_multiplier = .8;
 }
 
 void ofApp::connectPoints() {
+	int rand = ofRandom(1, 2);
+
 	for (size_t i = 0; i < num_pts; i++) {
 		is_connected[i] = false;
+
 		for (size_t j = i + 1; j < num_pts; j++) {
 			double dist = ofDist(points[i].x, points[i].y, points[j].x, points[j].y);
+
 			if (dist < distance_threshold) {
 				is_connected[i] = true;
 				ofSetColor(pt_colors[i].r, pt_colors[i].g, pt_colors[i].b);
 				ofSetLineWidth(line_width);
-				ofDrawLine(points[i], points[j]);
+
+				if (rand = 1) {
+					ofDrawLine(points[i], points[j]);
+				}
+				else {
+					ofDrawTriangle(points[j], points[i], points[j]);
+				}
 			}
 		}
 	}
